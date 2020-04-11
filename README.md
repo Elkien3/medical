@@ -1,6 +1,7 @@
 Note: features are subject to change. This mod is WIP and may not be useable in it's current state. Intructions on use will come further in development.
 
 Planned features:
+
 injury types: cuts, fractures, punctures, burns, bruises
 
 complications (injuries brought on from other injuries): obstructed airway, heart stopped, breathing stopped
