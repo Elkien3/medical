@@ -1,4 +1,5 @@
 Note: features are subject to change. This mod is WIP and may not be useable in it's current state. Intructions on use will come further in development.
+if you wish to help with this project please let me know.
 
 Planned features:
 

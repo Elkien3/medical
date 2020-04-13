@@ -76,6 +76,15 @@ function medical.gethitloc(player, hitter, tool_capabilities, dir)
 			hitpos = pointed.intersection_point
 		end
 	end
+	local playeryaw
+	if player:is_player() then
+		playeryaw = player:get_look_horizontal()
+	else
+		playeryaw = player:get_yaw()
+	end
+	local loc = vector.subtract(hitpos, playerpos)
+	local x, z = rotateVector(loc.x, loc.z, -playeryaw)
+	local local_hitpos = {x=x,y=loc.y,z=z}
 	if DEBUG_WAYPOINT then
 		local marker = hitter:hud_add({
 			hud_elem_type = "waypoint",
@@ -85,7 +94,24 @@ function medical.gethitloc(player, hitter, tool_capabilities, dir)
 		})
 		minetest.after(10, function() hitter:hud_remove(marker) end, hitter, marker)
 	end
-	return hitpos
+	return hitpos, local_hitpos
+end
+
+function medical.getclosest(table, local_hitpos)
+	local distance
+	local closest
+	for name, loc in pairs (table) do
+		if not distance then
+			distance = vector.distance(loc, local_hitpos)
+			closest = name
+		else
+			if vector.distance(loc, local_hitpos) < distance then
+				distance = vector.distance(loc, local_hitpos)
+				closest = name
+			end
+		end
+	end
+	return distance, closest
 end
 
 function medical.getlimb(player, hitter, tool_capabilities, dir, hitloc)

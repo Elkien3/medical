@@ -12,18 +12,18 @@ minetest.register_entity("medical:body", {
     on_activate = function(self, staticdata, dtime_s)
 		self.object:set_animation({x=162,y=167}, 1)
 		self.object:set_armor_groups({immortal = 1})
-		self.object:set_yaw(math.random(math.pi*-1, math.pi))
+		self.object:set_yaw(math.random(-math.pi, math.pi))
     end,
 	--[[get_staticdata = function(self)
-		--return minetest.serialize({owner = self.owner, sleeping = self.sleeping, expiretime = self.time, mesh = self.mesh, textures = self.textures, yaw = self.yaw, inv = serializeContents(self.inv)})
+		--return
 	end,--]]
     on_punch = function(self, puncher, time_from_last_punch, tool_capabilities, dir)
 		if not puncher:is_player() then return end
 		local wielditem = puncher:get_wielded_item()
 		local wieldname = wielditem:get_name()
-		local hitloc = medical.gethitloc(self, puncher, tool_capabilities, dir)
+		local hitloc, local_hitloc = medical.gethitloc(self.object, puncher, tool_capabilities, dir)
 		if medical.attachedtools[wieldname] then
-			medical.usedtools[wieldname](self, puncher, wielditem, hitloc)
+			medical.attachedtools[wieldname](self, puncher, wielditem, hitloc, local_hitloc)
 		end
 		-- attach things
     end,
@@ -31,9 +31,9 @@ minetest.register_entity("medical:body", {
 		if not clicker:is_player() then return end
 		local wielditem = clicker:get_wielded_item()
 		local wieldname = wielditem:get_name()
-		local hitloc = medical.gethitloc(self, clicker, nil, nil)
-		if medical.attachedtools[wieldname] then
-			medical.usedtools[wieldname](self, clicker, wielditem, hitloc)
+		local hitloc, local_hitloc = medical.gethitloc(self.object, clicker, nil, nil)
+		if medical.usedtools[wieldname] then
+			medical.usedtools[wieldname](self, clicker, wielditem, hitloc, local_hitloc)
 		end
 		-- use things
     end

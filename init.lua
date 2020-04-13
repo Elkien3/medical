@@ -10,6 +10,9 @@ if not medical.data.injuries then medical.data.injuries = {} end
 
 local modpath = minetest.get_modpath(minetest.get_current_modname())
 
+dofile(modpath.."/timers.lua")
+dofile(modpath.."/controls.lua")
 dofile(modpath.."/vitals.lua")
 dofile(modpath.."/hitloc.lua")
 dofile(modpath.."/body.lua")
+dofile(modpath.."/tools.lua")
