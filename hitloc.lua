@@ -1,32 +1,20 @@
-local limb_location = {}
+--standing locations
+local limb = {}
+limb["standing"]= {Head = {x=0,y=1.6,z=0}, Body = {x=0,y=1,z=0}, Arm_Right = {x=.3,y=1,z=0}, Arm_Left = {x=-.3,y=1,z=0}, Leg_Right = {x=.1,y=.4,z=0}, Leg_Left = {x=-.1,y=.4,z=0}}
 
---todo: make these change depending on what state the patient is in.
---[[ standing locations
-limb_location.head = {x=0,y=1.6,z=0}
-limb_location.torso = {x=0,y=1,z=0}
-limb_location.rightarm = {x=.3,y=1,z=0}
-limb_location.leftarm = {x=-.3,y=1,z=0}
-limb_location.rightleg = {x=.1,y=.4,z=0}
-limb_location.leftleg = {x=-.1,y=.4,z=0}
---]]
---[[ sitting locations
-limb_location.head = {x=0,y=.9,z=0}
-limb_location.torso = {x=0,y=.4,z=0}
-limb_location.rightarm = {x=.3,y=.4,z=0}
-limb_location.leftarm = {x=-.3,y=.4,z=0}
-limb_location.rightleg = {x=.1,y=.1,z=.35}
-limb_location.leftleg = {x=-.1,y=.1,z=.35}
---]]
+-- sitting locations
+limb["sitting"] = {Head = {x=0,y=.9,z=0}, Body = {x=0,y=.4,z=0}, Arm_Right = {x=.3,y=.4,z=0}, Arm_Left = {x=-.3,y=.4,z=0}, Leg_Right = {x=.1,y=.1,z=.35}, Leg_Left = {x=-.1,y=.1,z=.35}}
+
 -- laying locations
-limb_location.head = {x=0,y=.1,z=-.65}
-limb_location.torso = {x=0,y=.1,z=-.2}
-limb_location.rightarm = {x=.4,y=.1,z=-.125}
-limb_location.leftarm = {x=-.4,y=.1,z=-.125}
-limb_location.rightleg = {x=.2,y=.1,z=.5}
-limb_location.leftleg = {x=-.2,y=.1,z=.5}
+limb["laying"] = {Head = {x=0,y=.1,z=-.65}, Body = {x=0,y=.1,z=-.2}, Arm_Right = {x=.4,y=.1,z=-.125}, Arm_Left = {x=-.4,y=.1,z=-.125}, Leg_Right = {x=.2,y=.1,z=.5}, Leg_Left = {x=-.2,y=.1,z=.5}}
 
-local DEBUG_WAYPOINT = true
-local DEBUG_CHAT = true
+function medical.get_limb_locations(self)
+	--todo: make these change depending on what state the patient is in.
+	return limb["laying"]
+end
+
+local DEBUG_WAYPOINT = false
+local DEBUG_CHAT = false
 
 local function rotateVector(x, y, a)
   local c = math.cos(a)
@@ -131,7 +119,7 @@ function medical.getlimb(player, hitter, tool_capabilities, dir, hitloc)
 	else
 		playeryaw = player:get_yaw()
 	end
-	for id, pos in pairs(limb_location) do
+	for id, pos in pairs(medical.get_limb_locations(player)) do
 		local x, z = rotateVector(pos.x, pos.z, playeryaw)
 		local rot_pos = {x=x,y=pos.y,z=z}
 		local adj_pos = vector.add(playerpos, rot_pos)

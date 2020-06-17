@@ -8,22 +8,36 @@ default_vitals.volume = 5000 --milliliters
 default_vitals.systolic = 110 --mmHg
 default_vitals.diastolic = 70 --mmHg
 
+minetest.register_on_joinplayer(function(player)
+	local name = player:get_player_name()
+	if not medical.data[name] then
+		medical.data[name] = {}
+	end
+	if not medical.data[name].vitals then
+		medical.data[name].vitals = default_vitals
+	end
+end)
+
 minetest.register_globalstep(function(dtime)
 	timer = timer + dtime;
 	if timer >= 5 then
 		for _,player in ipairs(minetest.get_connected_players()) do
-			--player:set_bone_position("Head", {x=0,y=10,z=0}, {x=0,y=180,z=0})
-			--local bonepos = player:get_bone_position("Head")
-			--[[local text = ""
-			for id, data in pairs (bonepos) do
-				text = text.." "..tostring(id)..":"..dump(data)
-			end
-			minetest.chat_send_all(text)--]]
 			local name = player:get_player_name()
-			if not medical.data.vitals[name] then medical.data.vitals[name] = default_vitals end
 			
-			if medical.data.injuries[name] then
+			if medical.data[name].injuries then
 				--handle loss of vital signs due to injuries
+				for index, injury in pairs (medical.data[name].injuries) do
+					local injurydef = medical.injuries[injury.name]
+					if injurydef.medical_step then
+						injurydef.medical_step()
+					end
+					if injury.vitals then
+						for vital, amount in pairs (injury.vitals) do
+							medical.data[name].vitals[vital] = medical.data[name].vitals[vital] - amount
+						end
+					end
+					--handle loss of vital signs due to injuries
+				end
 			end
 			
 			if hunger then
@@ -34,7 +48,7 @@ minetest.register_globalstep(function(dtime)
 				--handle thirst things
 			end
 			
-			mv = medical.data.vitals[name]
+			local mv = medical.data[name].vitals
 			local perfusion = ((mv.oxygen-60)/34) * ((mv.pulse-30)/40) * ((mv.volume-2000)/3000) * ((mv.temp-70)/28)
 			
 			if perfusion < .9 then --compensate by raising pulse and respiratory rate
